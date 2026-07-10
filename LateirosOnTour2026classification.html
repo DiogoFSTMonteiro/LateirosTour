@@ -1,0 +1,1000 @@
+<!doctype html>
+<html lang="pt">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tour de France — Classificação dos Amigos</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f6f8ef;
+        --card: #ffffff;
+        --ink: #172016;
+        --muted: #65705f;
+        --line: #dbe3d2;
+        --green: #83bc3f;
+        --yellow: #ffd84d;
+        --red: #e9202a;
+        --blue: #1599d6;
+        --shadow: 0 18px 45px rgba(40, 56, 31, 0.11);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background:
+          radial-gradient(circle at top left, rgba(255, 216, 77, 0.38), transparent 33rem),
+          linear-gradient(135deg, #f8f4d8 0%, var(--bg) 38%, #eef6e9 100%);
+        color: var(--ink);
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      header {
+        padding: 34px clamp(16px, 4vw, 56px) 20px;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1.25fr) minmax(260px, 0.75fr);
+        gap: 22px;
+        align-items: stretch;
+      }
+
+      .panel {
+        background: rgba(255, 255, 255, 0.82);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        border-radius: 28px;
+        box-shadow: var(--shadow);
+        padding: 24px;
+        backdrop-filter: blur(12px);
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(2rem, 5vw, 4.8rem);
+        line-height: 0.95;
+        letter-spacing: -0.075em;
+      }
+
+      h2 {
+        margin: 0 0 16px;
+        font-size: 1.15rem;
+      }
+
+      p {
+        margin: 10px 0 0;
+        color: var(--muted);
+        line-height: 1.55;
+      }
+
+      .pill-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 20px;
+      }
+
+      .pill {
+        border-radius: 999px;
+        background: #eef6e6;
+        color: #31511f;
+        padding: 8px 12px;
+        font-size: 0.85rem;
+        font-weight: 700;
+      }
+
+      main {
+        display: grid;
+        gap: 20px;
+        padding: 0 clamp(16px, 4vw, 56px) 44px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 20px;
+      }
+
+      .span-4 {
+        grid-column: span 4;
+      }
+
+      .span-5 {
+        grid-column: span 5;
+      }
+
+      .span-7 {
+        grid-column: span 7;
+      }
+
+      .span-12 {
+        grid-column: span 12;
+      }
+
+      .stat {
+        display: grid;
+        gap: 6px;
+      }
+
+      .stat strong {
+        font-size: 2.2rem;
+        letter-spacing: -0.05em;
+      }
+
+      .stat span {
+        color: var(--muted);
+        font-weight: 650;
+      }
+
+      .table-wrap {
+        overflow: auto;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 880px;
+        background: var(--card);
+      }
+
+      th,
+      td {
+        padding: 11px 12px;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        vertical-align: top;
+        white-space: nowrap;
+      }
+
+      th {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        background: #f0f6ea;
+        font-size: 0.78rem;
+        letter-spacing: 0.045em;
+        text-transform: uppercase;
+      }
+
+      tbody tr:hover {
+        background: #fbfdf6;
+      }
+
+      .rank {
+        display: inline-grid;
+        place-items: center;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: var(--yellow);
+        font-weight: 900;
+      }
+
+      .score {
+        font-variant-numeric: tabular-nums;
+        font-weight: 850;
+      }
+
+      .negative {
+        color: #16833a;
+      }
+
+      .positive {
+        color: #8a3a12;
+      }
+
+      .rider {
+        color: #273322;
+        font-weight: 720;
+      }
+
+      .stage-card {
+        display: grid;
+        gap: 8px;
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: #fff;
+      }
+
+      .stage-card .stage-title {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        font-weight: 850;
+      }
+
+      .mini-list {
+        display: grid;
+        gap: 5px;
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+
+      .chart {
+        width: 100%;
+        min-height: 280px;
+      }
+
+      .chart text {
+        fill: var(--muted);
+        font-size: 12px;
+      }
+
+      .axis {
+        stroke: #c9d5bf;
+        stroke-width: 1;
+      }
+
+      .line {
+        fill: none;
+        stroke-width: 3;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .dot {
+        stroke: white;
+        stroke-width: 2;
+      }
+
+      .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 14px;
+        margin-top: 12px;
+      }
+
+      .legend span {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--muted);
+        font-size: 0.9rem;
+        font-weight: 700;
+      }
+
+      .swatch {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+      }
+
+      .stat-list {
+        display: grid;
+        gap: 10px;
+      }
+
+      .stat-row {
+        display: grid;
+        grid-template-columns: minmax(120px, 0.8fr) 1fr auto;
+        gap: 12px;
+        align-items: center;
+      }
+
+      .meter {
+        overflow: hidden;
+        height: 14px;
+        border-radius: 999px;
+        background: #edf2e7;
+      }
+
+      .meter i {
+        display: block;
+        height: 100%;
+        min-width: 4px;
+        border-radius: inherit;
+        background: linear-gradient(90deg, var(--green), var(--yellow));
+      }
+
+      .muted {
+        color: var(--muted);
+      }
+
+      .note {
+        border-left: 5px solid var(--yellow);
+        background: #fff9dc;
+        padding: 12px 14px;
+        border-radius: 12px;
+        color: #69551c;
+      }
+
+      footer {
+        color: var(--muted);
+        padding: 0 clamp(16px, 4vw, 56px) 36px;
+        font-size: 0.9rem;
+      }
+
+      @media (max-width: 980px) {
+        .hero,
+        .grid {
+          grid-template-columns: 1fr;
+        }
+
+        .span-4,
+        .span-5,
+        .span-7,
+        .span-12 {
+          grid-column: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <section class="hero">
+        <div class="panel">
+          <h1>Tour de France<br />Classificação</h1>
+          <p>
+            Dashboard para acompanhar a liga dos amigos por etapa: tabela geral,
+            evolução da classificação, pontos acumulados e detalhe de cada “Etapa”.
+          </p>
+          <div class="pill-row">
+            <span class="pill">Pontuação importada da folha</span>
+            <span class="pill">Menor total = melhor classificação</span>
+            <span class="pill">Atualizado até à etapa 6</span>
+          </div>
+        </div>
+        <aside class="panel" id="summary"></aside>
+      </section>
+    </header>
+
+    <main>
+      <section class="grid">
+        <article class="panel span-7">
+          <h2>Classificação geral</h2>
+          <div class="table-wrap">
+            <table id="leaderboard"></table>
+          </div>
+        </article>
+
+        <article class="panel span-5">
+          <h2>Pontos totais</h2>
+          <svg class="chart" id="barChart" viewBox="0 0 720 330" role="img"></svg>
+          <p class="note">
+            Nesta folha, acertar no vencedor/2.º/3.º aparece como pontos negativos
+            (-50/-25/-15), por isso a classificação ordena do menor para o maior total.
+          </p>
+        </article>
+      </section>
+
+      <section class="grid">
+        <article class="panel span-12">
+          <h2>Evolução da posição por etapa</h2>
+          <svg class="chart" id="rankChart" viewBox="0 0 980 430" role="img"></svg>
+          <div class="legend" id="rankLegend"></div>
+        </article>
+      </section>
+
+      <section class="grid">
+        <article class="panel span-12">
+          <h2>Pontos acumulados por etapa</h2>
+          <svg class="chart" id="cumulativeChart" viewBox="0 0 980 430" role="img"></svg>
+          <div class="legend" id="scoreLegend"></div>
+        </article>
+      </section>
+
+      <section class="grid">
+        <article class="panel span-12">
+          <h2>Detalhe por etapa / etapa</h2>
+          <div class="table-wrap">
+            <table id="stageTable"></table>
+          </div>
+        </article>
+      </section>
+
+      <section class="grid">
+        <article class="panel span-5">
+          <h2>Estatísticas por jogador</h2>
+          <div class="table-wrap">
+            <table id="playerStatsTable"></table>
+          </div>
+        </article>
+
+        <article class="panel span-7">
+          <h2>Estatísticas por ciclista</h2>
+          <div class="table-wrap">
+            <table id="cyclistStatsTable"></table>
+          </div>
+        </article>
+      </section>
+
+      <section class="grid">
+        <article class="panel span-12">
+          <h2>Top ciclistas mais escolhidos</h2>
+          <div class="stat-list" id="cyclistBars"></div>
+        </article>
+      </section>
+
+      <section class="grid">
+        <article class="panel span-12">
+          <h2>Melhores pontuações por etapa</h2>
+          <div class="grid" id="stageCards"></div>
+        </article>
+      </section>
+    </main>
+
+    <footer>
+      Feito a partir da imagem da folha Excel. Se adicionares mais etapas, edita o bloco
+      <code>stageScores</code> neste ficheiro HTML ou envia o ficheiro Excel para eu ligar isto automaticamente.
+    </footer>
+
+    <script>
+      const players = [
+        "Riscas",
+        "Sérgio",
+        "Marcial",
+        "Basílio",
+        "Ricardo",
+        "Carona",
+        "Vasco",
+        "Joni",
+        "Diogo",
+      ];
+
+      const colors = {
+        Riscas: "#e2a72f",
+        Sérgio: "#d91f2f",
+        Marcial: "#0e9ed2",
+        Basílio: "#79b843",
+        Ricardo: "#215baf",
+        Carona: "#111111",
+        Vasco: "#62ad3d",
+        Joni: "#ffdd2d",
+        Diogo: "#00a5df",
+      };
+
+      const stageScores = [
+        {
+          stage: 1,
+          date: "1 Julho",
+          picks: {
+            Riscas: { rider: "Visma", position: "1.º", points: -50 },
+            Sérgio: { rider: "UAE", position: "3.º", points: -15 },
+            Marcial: { rider: "Ineos", position: "2.º", points: -25 },
+            Basílio: { rider: "Red Bull Bora", position: "5.º", points: 5 },
+            Ricardo: { rider: "Lidl-Trek", position: "4.º", points: 4 },
+            Carona: { rider: "Movistar", position: "7.º", points: 7 },
+            Vasco: { rider: "Jayco", position: "18.º", points: 18 },
+            Joni: { rider: "Ducation Fil", position: "14.º", points: 14 },
+            Diogo: { rider: "Quickstep", position: "6.º", points: 6 },
+          },
+        },
+        {
+          stage: 2,
+          date: "2 Julho",
+          picks: {
+            Riscas: { rider: "Main Grego", position: "7.º", points: 7 },
+            Sérgio: { rider: "Pogacar", position: "2.º", points: -25 },
+            Marcial: { rider: "MVP", position: "22.º", points: 22 },
+            Basílio: { rider: "Vingegaard", position: "4.º", points: 4 },
+            Ricardo: { rider: "Remco", position: "3.º", points: -15 },
+            Carona: { rider: "Seixas", position: "9.º", points: 9 },
+            Vasco: { rider: "Pidcock", position: "10.º", points: 10 },
+            Joni: { rider: "Ayuso", position: "12.º", points: 12 },
+            Diogo: { rider: "Del Toro", position: "1.º", points: -50 },
+          },
+        },
+        {
+          stage: 3,
+          date: "3 Julho",
+          picks: {
+            Riscas: { rider: "Main Gregoi", position: "75.º", points: 75 },
+            Sérgio: { rider: "Mathias Vacek", position: "38.º", points: 38 },
+            Marcial: { rider: "Ben Martin", position: "13.º", points: 13 },
+            Basílio: { rider: "Pogacar", position: "1.º", points: -50 },
+            Ricardo: { rider: "Vingegaard", position: "2.º", points: -25 },
+            Carona: { rider: "Remco", position: "8.º", points: 8 },
+            Vasco: { rider: "Pidcock", position: "16.º", points: 16 },
+            Joni: { rider: "Seixas", position: "4.º", points: 4 },
+            Diogo: { rider: "Del Toro", position: "9.º", points: 9 },
+          },
+        },
+        {
+          stage: 4,
+          date: "4 Julho",
+          picks: {
+            Riscas: { rider: "M. Vacek", position: "10.º", points: 10 },
+            Sérgio: { rider: "B. Healy", position: "61.º", points: 61 },
+            Marcial: { rider: "M. Cort", position: "74.º", points: 74 },
+            Basílio: { rider: "Pogacar", position: "33.º", points: 33 },
+            Ricardo: { rider: "MVP", position: "134.º", points: 134 },
+            Carona: { rider: "Vingegaard", position: "43.º", points: 43 },
+            Vasco: { rider: "Remco", position: "57.º", points: 57 },
+            Joni: { rider: "L. Pedersen", position: "1.º", points: -50 },
+            Diogo: { rider: "Van Gils", position: "58.º", points: 58 },
+          },
+        },
+        {
+          stage: 5,
+          date: "5 Julho",
+          picks: {
+            Riscas: { rider: "M. Kanter", position: "2.º", points: -25 },
+            Sérgio: { rider: "P. Bauhaus", position: "18.º", points: 18 },
+            Marcial: { rider: "Warenskjo", position: "10.º", points: 10 },
+            Basílio: { rider: "P. Ackermann", position: "12.º", points: 12 },
+            Ricardo: { rider: "Philipsen", position: "5.º", points: 5 },
+            Carona: { rider: "Merlier", position: "3.º", points: -15 },
+            Vasco: { rider: "Girmay", position: "6.º", points: 6 },
+            Joni: { rider: "Kooij", position: "1.º", points: -50 },
+            Diogo: { rider: "M. Pedersen", position: "7.º", points: 7 },
+          },
+        },
+        {
+          stage: 6,
+          date: "6 Julho",
+          picks: {
+            Riscas: { rider: "Del Toro", position: "3.º", points: -15 },
+            Sérgio: { rider: "B. O'Connor", position: "37.º", points: 37 },
+            Marcial: { rider: "Johannessen", position: "18.º", points: 18 },
+            Basílio: { rider: "Remco", position: "4.º", points: 4 },
+            Ricardo: { rider: "L. Martinez", position: "9.º", points: 9 },
+            Carona: { rider: "Pogacar", position: "1.º", points: -50 },
+            Vasco: { rider: "Vingegaard", position: "2.º", points: -25 },
+            Joni: { rider: "P. Seixas", position: "5.º", points: 5 },
+            Diogo: { rider: "Carapaz", position: "23.º", points: 23 },
+          },
+        },
+        ...[
+          ["7 Julho", 7],
+          ["8 Julho", 8],
+          ["9 Julho", 9],
+          ["11 Julho", 10],
+          ["12 Julho", 11],
+          ["13 Julho", 12],
+          ["14 Julho", 13],
+          ["15 Julho", 14],
+          ["16 Julho", 15],
+          ["18 Julho", 16],
+          ["19 Julho", 17],
+          ["20 Julho", 18],
+          ["21 Julho", 19],
+          ["22 Julho", 20],
+          ["23 Julho", 21],
+        ].map(([date, stage]) => ({ stage, date, picks: {} })),
+      ];
+
+      const playedStages = stageScores.filter((s) => Object.keys(s.picks).length);
+
+      const riderAliases = {
+        pogaçar: "Pogacar",
+        pogacar: "Pogacar",
+        "t. pogacar": "Pogacar",
+        "tadej pogacar": "Pogacar",
+        vingegaard: "Vingegaard",
+        "j. vingegaard": "Vingegaard",
+        remco: "Remco",
+        "r. evenepoel": "Remco",
+        mvp: "MVP",
+        "van der poel": "MVP",
+        pidcock: "Pidcock",
+        seixas: "Seixas",
+        "p. seixas": "Seixas",
+        "del toro": "Del Toro",
+        philipsen: "Philipsen",
+      };
+
+      function normalizeRider(name) {
+        const compact = String(name)
+          .trim()
+          .toLowerCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/\s+/g, " ");
+        return riderAliases[compact] || String(name).trim();
+      }
+
+      function allBets() {
+        return playedStages.flatMap((stage) =>
+          players
+            .map((player) => {
+              const pick = stage.picks[player];
+              if (!pick?.rider) return null;
+              return {
+                stage: stage.stage,
+                date: stage.date,
+                player,
+                rider: normalizeRider(pick.rider),
+                originalRider: pick.rider,
+                points: pick.points,
+                position: pick.position,
+              };
+            })
+            .filter(Boolean),
+        );
+      }
+
+      function statsByPlayer() {
+        const bets = allBets();
+        return players.map((player) => {
+          const own = bets.filter((bet) => bet.player === player);
+          const counts = own.reduce((acc, bet) => {
+            acc[bet.rider] = (acc[bet.rider] || 0) + 1;
+            return acc;
+          }, {});
+          const favorite = Object.entries(counts).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0];
+          return {
+            player,
+            totalBets: own.length,
+            uniqueCyclists: Object.keys(counts).length,
+            favoriteCyclist: favorite ? favorite[0] : "—",
+            favoriteCount: favorite ? favorite[1] : 0,
+            pogacarCount: counts.Pogacar || 0,
+          };
+        });
+      }
+
+      function statsByCyclist() {
+        const grouped = allBets().reduce((acc, bet) => {
+          acc[bet.rider] ||= {
+            rider: bet.rider,
+            totalBets: 0,
+            players: {},
+            stages: [],
+            bestScore: Infinity,
+          };
+          acc[bet.rider].totalBets += 1;
+          acc[bet.rider].players[bet.player] = (acc[bet.rider].players[bet.player] || 0) + 1;
+          acc[bet.rider].stages.push(`E${bet.stage}`);
+          acc[bet.rider].bestScore = Math.min(acc[bet.rider].bestScore, bet.points);
+          return acc;
+        }, {});
+
+        return Object.values(grouped).sort(
+          (a, b) => b.totalBets - a.totalBets || a.rider.localeCompare(b.rider),
+        );
+      }
+
+      const totals = players.map((player) => ({
+        player,
+        total: playedStages.reduce((sum, stage) => sum + (stage.picks[player]?.points ?? 0), 0),
+        wins: playedStages.filter((stage) => stage.picks[player]?.position === "1.º").length,
+        podiums: playedStages.filter((stage) => ["1.º", "2.º", "3.º"].includes(stage.picks[player]?.position)).length,
+        bestStage: Math.min(...playedStages.map((stage) => stage.picks[player]?.points ?? Infinity)),
+      }));
+
+      const leaderboard = [...totals].sort((a, b) => a.total - b.total || b.wins - a.wins);
+
+      function signed(value) {
+        return value > 0 ? `+${value}` : `${value}`;
+      }
+
+      function cls(value) {
+        return value < 0 ? "negative" : value > 0 ? "positive" : "";
+      }
+
+      function cumulativeByPlayer() {
+        const running = Object.fromEntries(players.map((p) => [p, 0]));
+        return playedStages.map((stage) => {
+          const row = { stage: stage.stage };
+          players.forEach((player) => {
+            running[player] += stage.picks[player]?.points ?? 0;
+            row[player] = running[player];
+          });
+          return row;
+        });
+      }
+
+      function rankByStage() {
+        return cumulativeByPlayer().map((stageRow) => {
+          const ordered = players
+            .map((player) => ({ player, score: stageRow[player] }))
+            .sort((a, b) => a.score - b.score);
+          const ranks = { stage: stageRow.stage };
+          ordered.forEach((entry, index) => {
+            ranks[entry.player] = index + 1;
+          });
+          return ranks;
+        });
+      }
+
+      function renderSummary() {
+        const leader = leaderboard[0];
+        const mostPodiums = [...totals].sort((a, b) => b.podiums - a.podiums)[0];
+        document.querySelector("#summary").innerHTML = `
+          <div class="stat">
+            <span>Líder atual</span>
+            <strong>${leader.player}</strong>
+            <span class="score ${cls(leader.total)}">${signed(leader.total)} pontos</span>
+          </div>
+          <div class="pill-row">
+            <span class="pill">${playedStages.length} etapas com dados</span>
+            <span class="pill">${players.length} jogadores visíveis</span>
+            <span class="pill">${mostPodiums.player}: ${mostPodiums.podiums} pódios</span>
+          </div>
+        `;
+      }
+
+      function renderLeaderboard() {
+        document.querySelector("#leaderboard").innerHTML = `
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Jogador</th>
+              <th>Total</th>
+              <th>Vitórias</th>
+              <th>Pódios</th>
+              <th>Melhor etapa</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${leaderboard
+              .map(
+                (row, index) => `
+                  <tr>
+                    <td><span class="rank">${index + 1}</span></td>
+                    <td><strong>${row.player}</strong></td>
+                    <td class="score ${cls(row.total)}">${signed(row.total)}</td>
+                    <td>${row.wins}</td>
+                    <td>${row.podiums}</td>
+                    <td class="score ${cls(row.bestStage)}">${signed(row.bestStage)}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        `;
+      }
+
+      function renderStageTable() {
+        document.querySelector("#stageTable").innerHTML = `
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Etapa</th>
+              ${players.map((p) => `<th>${p}</th>`).join("")}
+            </tr>
+          </thead>
+          <tbody>
+            ${stageScores
+              .map(
+                (stage) => `
+                  <tr>
+                    <td>${stage.date}</td>
+                    <td>${stage.stage}</td>
+                    ${players
+                      .map((player) => {
+                        const pick = stage.picks[player];
+                        if (!pick) return "<td>—</td>";
+                        return `
+                          <td>
+                            <span class="rider">${pick.rider}</span><br />
+                            <span>${pick.position}</span>
+                            <span class="score ${cls(pick.points)}">${signed(pick.points)}</span>
+                          </td>
+                        `;
+                      })
+                      .join("")}
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        `;
+      }
+
+      function renderPlayerStats() {
+        document.querySelector("#playerStatsTable").innerHTML = `
+          <thead>
+            <tr>
+              <th>Jogador</th>
+              <th>Apostas</th>
+              <th>Ciclistas diferentes</th>
+              <th>Mais escolhido</th>
+              <th>Vezes em Pogacar</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${statsByPlayer()
+              .map(
+                (row) => `
+                  <tr>
+                    <td><strong>${row.player}</strong></td>
+                    <td>${row.totalBets}</td>
+                    <td>${row.uniqueCyclists}</td>
+                    <td>${row.favoriteCyclist} <span class="muted">(${row.favoriteCount}x)</span></td>
+                    <td>${row.pogacarCount}</td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        `;
+      }
+
+      function renderCyclistStats() {
+        document.querySelector("#cyclistStatsTable").innerHTML = `
+          <thead>
+            <tr>
+              <th>Ciclista</th>
+              <th>Total apostas</th>
+              <th>Quem apostou</th>
+              <th>Etapas</th>
+              <th>Melhor pontuação</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${statsByCyclist()
+              .map((row) => {
+                const playersText = Object.entries(row.players)
+                  .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+                  .map(([player, count]) => `${player} (${count}x)`)
+                  .join(", ");
+                return `
+                  <tr>
+                    <td><strong>${row.rider}</strong></td>
+                    <td>${row.totalBets}</td>
+                    <td>${playersText}</td>
+                    <td>${row.stages.join(", ")}</td>
+                    <td class="score ${cls(row.bestScore)}">${signed(row.bestScore)}</td>
+                  </tr>
+                `;
+              })
+              .join("")}
+          </tbody>
+        `;
+      }
+
+      function renderCyclistBars() {
+        const rows = statsByCyclist();
+        const max = Math.max(...rows.map((row) => row.totalBets), 1);
+        document.querySelector("#cyclistBars").innerHTML = rows
+          .slice(0, 12)
+          .map(
+            (row) => `
+              <div class="stat-row">
+                <strong>${row.rider}</strong>
+                <span class="meter"><i style="width:${(row.totalBets / max) * 100}%"></i></span>
+                <span>${row.totalBets} aposta${row.totalBets === 1 ? "" : "s"}</span>
+              </div>
+            `,
+          )
+          .join("");
+      }
+
+      function renderStageCards() {
+        document.querySelector("#stageCards").innerHTML = playedStages
+          .map((stage) => {
+            const best = players
+              .map((player) => ({ player, ...stage.picks[player] }))
+              .sort((a, b) => a.points - b.points)
+              .slice(0, 3);
+            return `
+              <div class="stage-card span-4">
+                <div class="stage-title">
+                  <span>Etapa ${stage.stage}</span>
+                  <span>${stage.date}</span>
+                </div>
+                <div class="mini-list">
+                  ${best
+                    .map(
+                      (entry, index) =>
+                        `<span>${index + 1}. <strong>${entry.player}</strong> — ${entry.rider}, ${entry.position}, <span class="score ${cls(entry.points)}">${signed(entry.points)}</span></span>`,
+                    )
+                    .join("")}
+                </div>
+              </div>
+            `;
+          })
+          .join("");
+      }
+
+      function scale(value, min, max, start, end) {
+        if (max === min) return (start + end) / 2;
+        return start + ((value - min) / (max - min)) * (end - start);
+      }
+
+      function renderBarChart() {
+        const svg = document.querySelector("#barChart");
+        const width = 720;
+        const height = 330;
+        const margin = { top: 26, right: 26, bottom: 66, left: 54 };
+        const values = totals.map((d) => d.total);
+        const min = Math.min(...values, 0);
+        const max = Math.max(...values, 0);
+        const zeroY = scale(0, min, max, height - margin.bottom, margin.top);
+        const barW = (width - margin.left - margin.right) / totals.length - 10;
+        svg.innerHTML = `
+          <line class="axis" x1="${margin.left}" y1="${zeroY}" x2="${width - margin.right}" y2="${zeroY}" />
+          ${leaderboard
+            .map((d, i) => {
+              const x = margin.left + i * (barW + 10) + 5;
+              const y = scale(d.total, min, max, height - margin.bottom, margin.top);
+              const barY = Math.min(y, zeroY);
+              const barH = Math.abs(zeroY - y);
+              return `
+                <rect x="${x}" y="${barY}" width="${barW}" height="${barH}" rx="8" fill="${colors[d.player]}" />
+                <text x="${x + barW / 2}" y="${barY - 8}" text-anchor="middle" class="${cls(d.total)}">${signed(d.total)}</text>
+                <text x="${x + barW / 2}" y="${height - 34}" text-anchor="middle" transform="rotate(-32 ${x + barW / 2} ${height - 34})">${d.player}</text>
+              `;
+            })
+            .join("")}
+        `;
+      }
+
+      function renderLineChart(selector, data, yLabel, yMin, yMax, invert = false) {
+        const svg = document.querySelector(selector);
+        const width = selector === "#rankChart" || selector === "#cumulativeChart" ? 980 : 720;
+        const height = selector === "#rankChart" || selector === "#cumulativeChart" ? 430 : 330;
+        const margin = { top: 32, right: 28, bottom: 52, left: 58 };
+        const stages = data.map((d) => d.stage);
+        const xFor = (stage) => scale(stage, Math.min(...stages), Math.max(...stages), margin.left, width - margin.right);
+        const yFor = (value) =>
+          invert
+            ? scale(value, yMin, yMax, margin.top, height - margin.bottom)
+            : scale(value, yMin, yMax, height - margin.bottom, margin.top);
+
+        const grid = Array.from({ length: invert ? yMax : 6 }, (_, i) => {
+          const value = invert ? i + 1 : Math.round(yMin + ((yMax - yMin) / 5) * i);
+          const y = yFor(value);
+          return `
+            <line class="axis" x1="${margin.left}" y1="${y}" x2="${width - margin.right}" y2="${y}" opacity="0.7" />
+            <text x="${margin.left - 12}" y="${y + 4}" text-anchor="end">${value}</text>
+          `;
+        }).join("");
+
+        svg.innerHTML = `
+          <text x="${margin.left}" y="18" font-weight="800">${yLabel}</text>
+          ${grid}
+          ${stages
+            .map((stage) => {
+              const x = xFor(stage);
+              return `
+                <line class="axis" x1="${x}" y1="${margin.top}" x2="${x}" y2="${height - margin.bottom}" opacity="0.3" />
+                <text x="${x}" y="${height - 18}" text-anchor="middle">E${stage}</text>
+              `;
+            })
+            .join("")}
+          ${players
+            .map((player) => {
+              const points = data.map((d) => `${xFor(d.stage)},${yFor(d[player])}`).join(" ");
+              return `
+                <polyline class="line" points="${points}" stroke="${colors[player]}" />
+                ${data
+                  .map(
+                    (d) =>
+                      `<circle class="dot" cx="${xFor(d.stage)}" cy="${yFor(d[player])}" r="4.5" fill="${colors[player]}" />`,
+                  )
+                  .join("")}
+              `;
+            })
+            .join("")}
+        `;
+      }
+
+      function renderLegend(selector) {
+        document.querySelector(selector).innerHTML = players
+          .map((player) => `<span><i class="swatch" style="background:${colors[player]}"></i>${player}</span>`)
+          .join("");
+      }
+
+      renderSummary();
+      renderLeaderboard();
+      renderStageTable();
+      renderPlayerStats();
+      renderCyclistStats();
+      renderCyclistBars();
+      renderStageCards();
+      renderBarChart();
+
+      const cumulative = cumulativeByPlayer();
+      const cumulativeValues = cumulative.flatMap((row) => players.map((p) => row[p]));
+      renderLineChart(
+        "#cumulativeChart",
+        cumulative,
+        "Pontos acumulados",
+        Math.min(...cumulativeValues),
+        Math.max(...cumulativeValues),
+      );
+      renderLineChart("#rankChart", rankByStage(), "Posição na geral", 1, players.length, true);
+      renderLegend("#rankLegend");
+      renderLegend("#scoreLegend");
+    </script>
+  </body>
+</html>
