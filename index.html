@@ -1,18 +1,388 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Lateiros Tour</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Lateiros On Tour</title>
+    <style>
+      :root {
+        --ink: #13140f;
+        --muted: #63675c;
+        --yellow: #ffd429;
+        --yellow-2: #ffe777;
+        --green: #1f8b4c;
+        --blue: #129ed8;
+        --red: #e73335;
+        --card: rgba(255, 255, 255, 0.82);
+        --line: rgba(19, 20, 15, 0.11);
+        --shadow: 0 24px 70px rgba(43, 47, 23, 0.18);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        color: var(--ink);
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+        background:
+          radial-gradient(circle at 10% 5%, rgba(255, 212, 41, 0.52), transparent 26rem),
+          radial-gradient(circle at 86% 8%, rgba(18, 158, 216, 0.18), transparent 23rem),
+          linear-gradient(135deg, #fff7ce 0%, #f5f9ed 45%, #e9f6e4 100%);
+        overflow-x: hidden;
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: auto -10vw -22vw -10vw;
+        height: 42vw;
+        min-height: 260px;
+        pointer-events: none;
+        background:
+          linear-gradient(135deg, transparent 42%, rgba(31, 139, 76, 0.12) 42.3% 50%, transparent 50.3%),
+          linear-gradient(25deg, transparent 43%, rgba(19, 20, 15, 0.08) 43.3% 49%, transparent 49.3%);
+        transform: rotate(-2deg);
+      }
+
+      .page {
+        width: min(1180px, calc(100% - 34px));
+        margin: 0 auto;
+        padding: 34px 0 46px;
+      }
+
+      nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 30px;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 950;
+        letter-spacing: -0.04em;
+        font-size: 1.15rem;
+      }
+
+      .brand-mark {
+        display: grid;
+        place-items: center;
+        width: 42px;
+        height: 42px;
+        border-radius: 15px;
+        background: var(--ink);
+        color: var(--yellow);
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.14);
+      }
+
+      .nav-pill {
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 10px 14px;
+        background: rgba(255, 255, 255, 0.58);
+        color: var(--muted);
+        font-size: 0.92rem;
+        font-weight: 750;
+        backdrop-filter: blur(14px);
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(320px, 0.8fr);
+        gap: 24px;
+        align-items: stretch;
+      }
+
+      .panel {
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.9);
+        border-radius: 34px;
+        background: var(--card);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(18px);
+      }
+
+      .intro {
+        padding: clamp(26px, 5vw, 54px);
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 18px;
+        border-radius: 999px;
+        background: rgba(255, 212, 41, 0.35);
+        color: #5d4d00;
+        padding: 9px 13px;
+        font-size: 0.86rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      h1 {
+        margin: 0;
+        max-width: 780px;
+        font-size: clamp(3.2rem, 9vw, 7.6rem);
+        line-height: 0.86;
+        letter-spacing: -0.095em;
+      }
+
+      .lead {
+        max-width: 660px;
+        margin: 22px 0 0;
+        color: var(--muted);
+        font-size: clamp(1.04rem, 1.6vw, 1.22rem);
+        line-height: 1.6;
+      }
+
+      .options {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+        margin-top: 30px;
+      }
+
+      .option {
+        position: relative;
+        display: grid;
+        gap: 14px;
+        min-height: 190px;
+        padding: 22px;
+        border: 1px solid var(--line);
+        border-radius: 26px;
+        color: inherit;
+        text-decoration: none;
+        background:
+          linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.58)),
+          radial-gradient(circle at top right, rgba(255, 212, 41, 0.36), transparent 12rem);
+        transition:
+          transform 180ms ease,
+          box-shadow 180ms ease,
+          border-color 180ms ease;
+      }
+
+      .option:hover {
+        transform: translateY(-4px);
+        border-color: rgba(19, 20, 15, 0.2);
+        box-shadow: 0 18px 42px rgba(43, 47, 23, 0.16);
+      }
+
+      .option strong {
+        display: block;
+        font-size: 1.55rem;
+        letter-spacing: -0.055em;
+      }
+
+      .option p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.45;
+      }
+
+      .option .arrow {
+        display: inline-grid;
+        place-items: center;
+        width: 46px;
+        height: 46px;
+        margin-top: auto;
+        border-radius: 50%;
+        background: var(--ink);
+        color: white;
+        font-size: 1.4rem;
+      }
+
+      .option.current {
+        background:
+          linear-gradient(145deg, rgba(255, 212, 41, 0.92), rgba(255, 231, 119, 0.82)),
+          radial-gradient(circle at top right, rgba(255, 255, 255, 0.72), transparent 12rem);
+      }
+
+      .option.current p {
+        color: #574600;
+      }
+
+      .art {
+        display: grid;
+        min-height: 560px;
+        padding: 24px;
+        place-items: center;
+      }
+
+      .art svg {
+        width: min(100%, 480px);
+        height: auto;
+        filter: drop-shadow(0 28px 32px rgba(60, 65, 34, 0.18));
+      }
+
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+        margin-top: 24px;
+      }
+
+      .stat {
+        padding: 18px;
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        background: rgba(255, 255, 255, 0.62);
+      }
+
+      .stat b {
+        display: block;
+        font-size: 1.9rem;
+        letter-spacing: -0.06em;
+      }
+
+      .stat span {
+        color: var(--muted);
+        font-weight: 760;
+      }
+
+      footer {
+        margin-top: 24px;
+        color: var(--muted);
+        text-align: center;
+        font-size: 0.92rem;
+      }
+
+      @media (max-width: 900px) {
+        .hero,
+        .options,
+        .stats {
+          grid-template-columns: 1fr;
+        }
+
+        .art {
+          min-height: 360px;
+        }
+
+        nav {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+      }
+    </style>
   </head>
   <body>
-    <h1>Lateiros Tour</h1>
+    <div class="page">
+      <nav>
+        <div class="brand">
+          <span class="brand-mark">LT</span>
+          <span>Lateiros On Tour</span>
+        </div>
+        <div class="nav-pill">Tour de France predictor dashboards</div>
+      </nav>
 
-    <p>
-      <a href="LateirosOnTour2025classification.html">Tour 2025 Classification</a>
-    </p>
+      <main class="hero">
+        <section class="panel intro">
+          <span class="eyebrow">🚴 Lateiro de amarelo</span>
+          <p class="lead">
+            Escolhe o ano da Lateiros Tour.
+          </p>
 
-    <p>
-      <a href="LateirosOnTour2026classification.html">Tour 2026 Classification</a>
-    </p>
+          <div class="options" aria-label="Dashboard options">
+            <a class="option" href="LateirosOnTour2025classification.html">
+              <div>
+                <strong>Tour 2025</strong>
+                <p>Classificação do ultimo ano</p>
+              </div>
+              <span class="arrow">→</span>
+            </a>
+
+            <a class="option current" href="LateirosOnTour2026classification.html">
+              <div>
+                <strong>Tour 2026</strong>
+                <p>Classificação atual</p>
+              </div>
+              <span class="arrow">→</span>
+            </a>
+          </div>
+
+          <div class="stats" aria-label="Site summary">
+            <div class="stat">
+              <b>2</b>
+              <span>dashboards</span>
+            </div>
+            <div class="stat">
+              <b>21</b>
+              <span>etapas per tour</span>
+            </div>
+            <div class="stat">
+              <b>∞</b>
+              <span>friendly arguments</span>
+            </div>
+          </div>
+        </section>
+
+        <aside class="panel art" aria-label="Tour de France cycling illustration">
+          <svg viewBox="0 0 520 560" role="img" aria-labelledby="svgTitle svgDesc">
+            <title id="svgTitle">Cyclist climbing a Tour de France mountain road</title>
+            <desc id="svgDesc">
+              Original illustration of a yellow cyclist riding uphill with mountains and a sun.
+            </desc>
+            <defs>
+              <linearGradient id="sky" x1="0" x2="1" y1="0" y2="1">
+                <stop offset="0%" stop-color="#fff4b6" />
+                <stop offset="100%" stop-color="#dff2ff" />
+              </linearGradient>
+              <linearGradient id="road" x1="0" x2="1" y1="0" y2="0">
+                <stop offset="0%" stop-color="#20221c" />
+                <stop offset="100%" stop-color="#494d3e" />
+              </linearGradient>
+            </defs>
+
+            <rect width="520" height="560" rx="44" fill="url(#sky)" />
+            <circle cx="390" cy="96" r="58" fill="#ffd429" />
+            <path d="M0 324 C80 246 127 247 197 320 C276 208 359 185 520 317 L520 560 L0 560 Z" fill="#9bcf7a" />
+            <path d="M0 363 C103 304 178 323 252 374 C340 286 413 292 520 366 L520 560 L0 560 Z" fill="#55a85c" />
+            <path d="M-30 535 C111 421 279 382 550 350 L550 560 L-30 560 Z" fill="url(#road)" />
+            <path d="M114 514 C210 452 331 418 480 390" fill="none" stroke="#fff7d8" stroke-width="9" stroke-linecap="round" stroke-dasharray="28 26" opacity="0.95" />
+
+            <g transform="translate(94 242)">
+              <circle cx="96" cy="184" r="58" fill="none" stroke="#111" stroke-width="16" />
+              <circle cx="312" cy="184" r="58" fill="none" stroke="#111" stroke-width="16" />
+              <circle cx="96" cy="184" r="7" fill="#111" />
+              <circle cx="312" cy="184" r="7" fill="#111" />
+              <path d="M96 184 L165 116 L222 184 Z" fill="none" stroke="#111" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M165 116 L239 104 L312 184" fill="none" stroke="#111" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M222 184 L242 129" fill="none" stroke="#111" stroke-width="12" stroke-linecap="round" />
+              <path d="M237 102 L269 88" fill="none" stroke="#111" stroke-width="10" stroke-linecap="round" />
+              <path d="M160 114 L139 82" fill="none" stroke="#111" stroke-width="10" stroke-linecap="round" />
+
+              <circle cx="210" cy="38" r="25" fill="#211b12" />
+              <path d="M183 65 C211 47 244 59 261 91 L238 120 C218 92 198 91 171 113 L143 88 C153 78 166 70 183 65 Z" fill="#ffd429" />
+              <path d="M237 120 C259 130 281 143 305 160" fill="none" stroke="#111" stroke-width="13" stroke-linecap="round" />
+              <path d="M174 112 C149 126 126 145 103 176" fill="none" stroke="#111" stroke-width="13" stroke-linecap="round" />
+              <path d="M172 113 L222 184" fill="none" stroke="#111" stroke-width="13" stroke-linecap="round" />
+              <path d="M226 182 C242 191 257 199 274 211" fill="none" stroke="#111" stroke-width="13" stroke-linecap="round" />
+              <path d="M174 112 C188 138 196 156 201 181" fill="none" stroke="#111" stroke-width="13" stroke-linecap="round" />
+              <path d="M200 181 C181 189 164 199 145 213" fill="none" stroke="#111" stroke-width="13" stroke-linecap="round" />
+              <path d="M188 20 C207 4 234 10 246 30 C224 29 208 26 188 20 Z" fill="#111" />
+            </g>
+
+            <g transform="translate(42 46)">
+              <rect x="0" y="0" width="136" height="45" rx="18" fill="#111" />
+              <text x="68" y="29" text-anchor="middle" font-family="Arial, sans-serif" font-size="17" font-weight="900" fill="#ffd429">LE TOUR</text>
+            </g>
+          </svg>
+        </aside>
+      </main>
+
+      <footer>
+        Built for public GitHub Pages hosting — upload this file as <code>index.html</code>.
+      </footer>
+    </div>
   </body>
 </html>
