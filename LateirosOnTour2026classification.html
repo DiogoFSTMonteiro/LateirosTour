@@ -338,7 +338,7 @@
           <div class="pill-row">
             <span class="pill">Pontuação importada da folha</span>
             <span class="pill">Menor total = melhor classificação</span>
-            <span class="pill">Atualizado até à etapa 7</span>
+            <span class="pill">Atualizado até à etapa 9</span>
           </div>
         </div>
         <aside class="panel" id="summary"></aside>
@@ -420,10 +420,6 @@
       </section>
     </main>
 
-    <footer>
-      Feito a partir da imagem da folha Excel. Se adicionares mais etapas, edita o bloco
-      <code>stageScores</code> neste ficheiro HTML ou envia o ficheiro Excel para eu ligar isto automaticamente.
-    </footer>
 
     <script>
       const players = [
@@ -556,9 +552,37 @@
             Diogo: { rider: "J.Philipsen", position: "5.º", points: 5 },
           },
         },
+        {
+          stage: 8,
+          date: "8 Julho",
+          picks: {
+            Riscas: { rider: "Girmay", position: "2.º", points: -25 },
+            Sérgio: { rider: "Vaerenskj", position: "12.º", points: 12 },
+            Marcial: { rider: "Kanter", position: "9.º", points: 9 },
+            Basílio: { rider: "Kooij", position: "3.º", points: -15 },
+            Ricardo: { rider: "Pedersen", position: "12.º", points: 12 },
+            Carona: { rider: "Bauhaus", position: "17.º", points: 17 },
+            Vasco: { rider: "D.Godon", position: "14.º", points: 14 },
+            Joni: { rider: "Merlier", position: "1.º", points: -50 },
+            Diogo: { rider: "Philipsen", position: "4.º", points: 4 },
+          },
+        },
+        {
+          stage: 9,
+          date: "9 Julho",
+          picks: {
+            Riscas: { rider: "Q.Simmons", position: "47.º", points: 47 },
+            Sérgio: { rider: "Pogacar", position: "11.º", points: 11 },
+            Marcial: { rider: "R. Gregoire", position: "95.º", points: 95 },
+            Basílio: { rider: "Vingegaard", position: "19.º", points: 19 },
+            Ricardo: { rider: "Pedersen", position: "6.º", points: 6 },
+            Carona: { rider: "MVP", position: "1.º", points: -50 },
+            Vasco: { rider: "R.Garcia", position: "110.º", points: 110 },
+            Joni: { rider: "B.Healy", position: "105.º", points: 105 },
+            Diogo: { rider: "Vacek", position: "59.º", points: 59 },
+          },
+        },
         ...[
-          ["8 Julho", 8],
-          ["9 Julho", 9],
           ["11 Julho", 10],
           ["12 Julho", 11],
           ["13 Julho", 12],
