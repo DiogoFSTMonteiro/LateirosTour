@@ -75,8 +75,15 @@
       .legend { display: flex; flex-wrap: wrap; gap: 10px 14px; margin-top: 10px; }
       .legend span { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-weight: 800; font-size: .9rem; }
       .swatch { width: 10px; height: 10px; border-radius: 50%; }
+      .takeaways { display: grid; gap: 16px; margin-bottom: 20px; padding: 22px; border: 1px solid rgba(255,255,255,.9); border-radius: 26px; background: radial-gradient(circle at top left, rgba(255,216,77,.3), transparent 18rem), rgba(255,255,255,.86); box-shadow: var(--shadow); color: var(--ink); }
+      .takeaways h2 { margin: 0; }
+      .takeaways-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+      .takeaway-card { min-height: 128px; padding: 16px; border: 1px solid var(--line); border-radius: 20px; background: rgba(255,255,255,.78); }
+      .takeaway-card span { display: inline-flex; margin-bottom: 10px; font-size: 1.35rem; }
+      .takeaway-card strong { display: block; margin-bottom: 5px; color: var(--ink); font-size: 1rem; }
+      .takeaway-card p { margin: 0; color: var(--muted); font-size: .92rem; }
       @media (max-width: 960px) {
-        .hero, .grid, .cards { grid-template-columns: 1fr; }
+        .hero, .grid, .cards, .takeaways-grid { grid-template-columns: 1fr; }
         .span-4, .span-5, .span-7, .span-12 { grid-column: auto; }
       }
     </style>
@@ -116,6 +123,15 @@
         <article class="panel span-12"><h2>Melhores por etapa</h2><div class="cards" id="stageCards"></div></article>
       </section>
     </main>
+
+    <footer>
+      <section class="takeaways" aria-labelledby="takeaways-title">
+        <h2 id="takeaways-title">Conclusões e curiosidades</h2>
+        <div class="takeaways-grid" id="takeawaysGrid"></div>
+      </section>
+    
+    </footer>
+
     <script>
       const players = ["Basílio","Vasco","Marcial","Miguel","Sérgio","Joni","Ricardo","Riscas","Diogo"];
       const colors = { Basílio:"#7fbf3f", Vasco:"#2ca02c", Marcial:"#0ea5d8", Miguel:"#f1872b", Sérgio:"#d91f2f", Joni:"#f4cc15", Ricardo:"#215baf", Riscas:"#a87925", Diogo:"#00a5df" };
@@ -204,6 +220,26 @@
           return `<div class="stage-card"><b><span>Etapa ${s.stage}</span><span>Top 3</span></b><div class="mini">${best.map((b,i)=>`<span>${i+1}. <b>${b.player}</b> — ${b.rider}, ${b.pos}, <span class="score ${scoreClass(b.pts)}">${signed(b.pts)}</span></span>`).join("")}</div></div>`;
         }).join("");
       }
+      function renderTakeaways() {
+        const leader = leaderboard[0];
+        const closestChaser = leaderboard[1];
+        const mostPickedCyclist = cyclistStats[0];
+        const pogacar = cyclistStats.find(c => c.rider === "Pogacar");
+        const mostPodiums = [...totals].sort((a,b) => b.podiums - a.podiums || a.total - b.total)[0];
+        const bestBet = [...bets].sort((a,b) => a.points - b.points)[0];
+        const worstBet = [...bets].sort((a,b) => b.points - a.points)[0];
+        const uniqueCyclists = new Set(bets.map(b => b.rider)).size;
+        const pogacarPlayers = pogacar ? Object.entries(pogacar.players).sort((a,b) => b[1] - a[1] || a[0].localeCompare(b[0])).map(([player,count]) => `${player} ${count}x`).join(", ") : "Ainda ninguém apostou nele.";
+        const facts = [
+          { icon:"🏆", title:"Camisola amarela do grupo", text:`${leader.player} liderou a classificação final com ${signed(leader.total)} pontos, com ${Math.abs(closestChaser.total - leader.total)} pontos de vantagem sobre ${closestChaser.player}.` },
+          { icon:"🔥", title:"Ciclista mais escolhido", text:`${mostPickedCyclist.rider} foi o favorito da malta, com ${mostPickedCyclist.total} apostas nas 21 etapas.` },
+          { icon:"🇸🇮", title:"Observatório Pogacar", text:`Pogacar recebeu ${pogacar?.total || 0} apostas: ${pogacarPlayers}.` },
+          { icon:"🎯", title:"Melhor tiro numa etapa", text:`${bestBet.player} acertou em cheio com ${bestBet.rider} na Etapa ${bestBet.stage}, somando ${signed(bestBet.points)} pontos.` },
+          { icon:"😬", title:"Maior rombo da etapa", text:`A aposta de ${worstBet.player} em ${worstBet.rider} na Etapa ${worstBet.stage} custou ${signed(worstBet.points)} pontos.` },
+          { icon:"📊", title:"Variedade nas apostas", text:`Foram escolhidos ${uniqueCyclists} ciclistas diferentes, e ${mostPodiums.player} teve mais apostas no pódio, com ${mostPodiums.podiums}.` },
+        ];
+        document.querySelector("#takeawaysGrid").innerHTML = facts.map(f => `<article class="takeaway-card"><span>${f.icon}</span><strong>${f.title}</strong><p>${f.text}</p></article>`).join("");
+      }
       function cumulativeRanks() {
         const running = Object.fromEntries(players.map(p => [p,0]));
         return data.map(s => {
@@ -221,7 +257,7 @@
         svg.innerHTML = `${Array.from({length:players.length},(_,i)=>`<line class="axis" x1="${m.l}" y1="${y(i+1)}" x2="${W-m.r}" y2="${y(i+1)}" opacity=".65"/><text x="${m.l-10}" y="${y(i+1)+4}" text-anchor="end">${i+1}</text>`).join("")}${data.map(s=>`<text x="${x(s.stage)}" y="${H-16}" text-anchor="middle">E${s.stage}</text>`).join("")}${players.map(p=>`<polyline class="line" stroke="${colors[p]}" points="${rows.map(r=>`${x(r.stage)},${y(r[p])}`).join(" ")}"/>${rows.map(r=>`<circle class="dot" cx="${x(r.stage)}" cy="${y(r[p])}" r="4" fill="${colors[p]}"/>`).join("")}`).join("")}`;
         document.querySelector("#legend").innerHTML = players.map(p=>`<span><i class="swatch" style="background:${colors[p]}"></i>${p}</span>`).join("");
       }
-      renderSummary(); renderLeaderboard(); renderCyclistBars(); renderPlayerStats(); renderCyclistStats(); renderStageTable(); renderStageCards(); renderRankChart();
+      renderSummary(); renderLeaderboard(); renderCyclistBars(); renderPlayerStats(); renderCyclistStats(); renderStageTable(); renderStageCards(); renderTakeaways(); renderRankChart();
     </script>
   </body>
 </html>
