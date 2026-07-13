@@ -311,6 +311,57 @@
         font-size: 0.9rem;
       }
 
+      .takeaways {
+        display: grid;
+        gap: 16px;
+        margin-bottom: 20px;
+        padding: 22px;
+        border: 1px solid rgba(255, 255, 255, 0.9);
+        border-radius: 28px;
+        background:
+          radial-gradient(circle at top left, rgba(255, 216, 77, 0.28), transparent 18rem),
+          rgba(255, 255, 255, 0.82);
+        box-shadow: var(--shadow);
+        color: var(--ink);
+      }
+
+      .takeaways h2 {
+        margin: 0;
+      }
+
+      .takeaways-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .takeaway-card {
+        min-height: 128px;
+        padding: 16px;
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.78);
+      }
+
+      .takeaway-card span {
+        display: inline-flex;
+        margin-bottom: 10px;
+        font-size: 1.35rem;
+      }
+
+      .takeaway-card strong {
+        display: block;
+        margin-bottom: 5px;
+        color: var(--ink);
+        font-size: 1rem;
+      }
+
+      .takeaway-card p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+
       @media (max-width: 980px) {
         .hero,
         .grid {
@@ -320,8 +371,10 @@
         .span-4,
         .span-5,
         .span-7,
-        .span-12 {
+        .span-12,
+        .takeaways-grid {
           grid-column: auto;
+          grid-template-columns: 1fr;
         }
       }
     </style>
@@ -420,6 +473,15 @@
       </section>
     </main>
 
+    <footer>
+      <section class="takeaways" aria-labelledby="takeaways-title">
+        <h2 id="takeaways-title">Conclusões e curiosidades</h2>
+        <div class="takeaways-grid" id="takeawaysGrid"></div>
+      </section>
+
+      Feito a partir da imagem da folha Excel. Se adicionares mais etapas, edita o bloco
+      <code>stageScores</code> neste ficheiro HTML ou envia o ficheiro Excel para eu ligar isto automaticamente.
+    </footer>
 
     <script>
       const players = [
@@ -896,6 +958,71 @@
           .join("");
       }
 
+      function renderTakeaways() {
+        const bets = allBets();
+        const leader = leaderboard[0];
+        const closestChaser = leaderboard[1];
+        const mostPickedCyclist = statsByCyclist()[0];
+        const pogacar = statsByCyclist().find((row) => row.rider === "Pogacar");
+        const mostPodiums = [...totals].sort((a, b) => b.podiums - a.podiums || a.total - b.total)[0];
+        const bestBet = [...bets].sort((a, b) => a.points - b.points)[0];
+        const worstBet = [...bets].sort((a, b) => b.points - a.points)[0];
+        const uniqueCyclists = new Set(bets.map((bet) => bet.rider)).size;
+        const currentStages = playedStages.length;
+
+        const pogacarPlayers = pogacar
+          ? Object.entries(pogacar.players)
+              .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+              .map(([player, count]) => `${player} ${count}x`)
+              .join(", ")
+          : "Ainda ninguém apostou nele.";
+
+        const facts = [
+          {
+            icon: "🏆",
+            title: "Camisola amarela do grupo",
+            text: `${leader.player} lidera com ${signed(leader.total)} pontos, com ${Math.abs(closestChaser.total - leader.total)} pontos de vantagem sobre ${closestChaser.player}.`,
+          },
+          {
+            icon: "🔥",
+            title: "Ciclista mais escolhido",
+            text: `${mostPickedCyclist.rider} é o favorito da malta, com ${mostPickedCyclist.totalBets} apostas em ${currentStages} etapas.`,
+          },
+          {
+            icon: "🇸🇮",
+            title: "Observatório Pogacar",
+            text: `Pogacar recebeu ${pogacar?.totalBets || 0} apostas até agora: ${pogacarPlayers}.`,
+          },
+          {
+            icon: "🎯",
+            title: "Melhor tiro numa etapa",
+            text: `${bestBet.player} acertou em cheio com ${bestBet.rider} na Etapa ${bestBet.stage}, somando ${signed(bestBet.points)} pontos.`,
+          },
+          {
+            icon: "😬",
+            title: "Maior rombo da etapa",
+            text: `A aposta de ${worstBet.player} em ${worstBet.rider} na Etapa ${worstBet.stage} custou ${signed(worstBet.points)} pontos.`,
+          },
+          {
+            icon: "📊",
+            title: "Variedade nas apostas",
+            text: `Já foram escolhidos ${uniqueCyclists} ciclistas diferentes, e ${mostPodiums.player} tem mais apostas no pódio, com ${mostPodiums.podiums}.`,
+          },
+        ];
+
+        document.querySelector("#takeawaysGrid").innerHTML = facts
+          .map(
+            (fact) => `
+              <article class="takeaway-card">
+                <span>${fact.icon}</span>
+                <strong>${fact.title}</strong>
+                <p>${fact.text}</p>
+              </article>
+            `,
+          )
+          .join("");
+      }
+
       function renderStageCards() {
         document.querySelector("#stageCards").innerHTML = playedStages
           .map((stage) => {
@@ -1018,6 +1145,7 @@
       renderPlayerStats();
       renderCyclistStats();
       renderCyclistBars();
+      renderTakeaways();
       renderStageCards();
       renderBarChart();
 
